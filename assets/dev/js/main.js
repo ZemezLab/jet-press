@@ -1,0 +1,1 @@
+import './blocks/pricing-table';
