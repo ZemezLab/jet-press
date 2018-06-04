@@ -2,9 +2,14 @@ const { __ } = wp.i18n;
 const {
 	registerBlockType,
 	RichText,
-	MediaUpload
+	MediaUpload,
+	UrlInput
 } = wp.blocks;
-const { Button } = wp.components;
+const {
+	Button,
+	Dashicon,
+	IconButton
+} = wp.components;
 
 registerBlockType( 'jet-press/pricing-table', {
 	title: __( 'Pricing Table' ),
@@ -26,6 +31,17 @@ registerBlockType( 'jet-press/pricing-table', {
 			source: 'children',
 			selector: 'ul.pricing-table__features',
 		},
+		buttonUrl: {
+			type: 'string',
+			source: 'attribute',
+			selector: 'a.pricing-table__button',
+			attribute: 'href',
+		},
+		buttonText: {
+			type: 'array',
+			source: 'childern',
+			selector: 'a.pricing-table__button',
+		}
 	},
 	edit: props => {
 
@@ -53,6 +69,14 @@ registerBlockType( 'jet-press/pricing-table', {
 			props.setFocus( _.extend( {}, focus, { editable: 'features' } ) );
 		};
 
+		const onChangeButton = value => {
+			props.setAttributes( { buttonText: value } );
+		};
+
+		const onFocusButton = focus => {
+			console.log( focus );
+		};
+
 		return (
 			<div className={ props.className }>
 				<RichText
@@ -62,7 +86,6 @@ registerBlockType( 'jet-press/pricing-table', {
 					value={ attributes.title }
 					onChange={ onChangeTitle }
 					focus={ focusedEditable === 'title' }
-					onFocus={ onFocusTitle }
 				/>
 				<RichText
 					className="pricing-table__subtitle"
@@ -71,7 +94,6 @@ registerBlockType( 'jet-press/pricing-table', {
 					value={ attributes.subTitle }
 					onChange={ onChangeSubTitle }
 					focus={ focusedEditable === 'subTitle' }
-					onFocus={ onFocusSubTitle }
 				/>
 				<RichText
 					tagName="ul"
@@ -81,8 +103,22 @@ registerBlockType( 'jet-press/pricing-table', {
 					value={ attributes.features }
 					onChange={ onChangeFeatures }
 					focus={ focusedEditable === 'features' }
-					onFocus={ onFocusFeatures }
 				/>
+				<RichText
+					tagName="a"
+					className="pricing-table__button"
+					href={ attributes.buttonUrl }
+					value={ attributes.buttonText }
+					placeholder={ __( 'Button text…' ) }
+					onChange={ onChangeButton }
+					onFocus={ onFocusButton }
+				/>
+				{ props.isSelected && (
+					<UrlInput
+						value={ attributes.buttonUrl }
+						onChange={ ( value ) => props.setAttributes( { buttonUrl: value } ) }
+					/>
+				) }
 			</div>
 		);
 	},
@@ -92,7 +128,9 @@ registerBlockType( 'jet-press/pricing-table', {
 			attributes: {
 				title,
 				subTitle,
-				features
+				features,
+				buttonUrl,
+				buttonText
 			}
 		} = props;
 		return (
@@ -106,6 +144,11 @@ registerBlockType( 'jet-press/pricing-table', {
 				<ul className="pricing-table__features">
 					{ features }
 				</ul>
+				<div className="pricing-table__actions">
+					<a href={ buttonUrl } className="pricing-table__button">
+						{ buttonText }
+					</a>
+				</div>
 			</div>
 		);
 	}
