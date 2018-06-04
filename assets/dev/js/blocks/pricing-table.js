@@ -1,5 +1,10 @@
-const { registerBlockType, RichText } = wp.blocks;
 const { __ } = wp.i18n;
+const {
+	registerBlockType,
+	RichText,
+	MediaUpload
+} = wp.blocks;
+const { Button } = wp.components;
 
 registerBlockType( 'jet-press/pricing-table', {
 	title: __( 'Pricing Table' ),
@@ -9,17 +14,17 @@ registerBlockType( 'jet-press/pricing-table', {
 		title: {
 			type: 'array',
 			source: 'children',
-			selector: 'h2',
+			selector: 'h2.pricing-table__title',
 		},
 		subTitle: {
 			type: 'array',
 			source: 'children',
-			selector: 'h4',
+			selector: 'h3.pricing-table__subtitle',
 		},
 		features: {
 			type: 'array',
 			source: 'children',
-			selector: '.features',
+			selector: 'ul.pricing-table__features',
 		},
 	},
 	edit: props => {
@@ -51,30 +56,32 @@ registerBlockType( 'jet-press/pricing-table', {
 		return (
 			<div className={ props.className }>
 				<RichText
+					className="pricing-table__title"
 					tagName="h2"
-					placeholder={ __( 'Write title…' ) }
+					placeholder={ __( 'Write subtitle…' ) }
 					value={ attributes.title }
 					onChange={ onChangeTitle }
 					focus={ focusedEditable === 'title' }
 					onFocus={ onFocusTitle }
 				/>
 				<RichText
+					className="pricing-table__subtitle"
 					tagName="h3"
-					placeholder={ __( 'Write subtitle…' ) }
+					placeholder={ __( 'Write title…' ) }
 					value={ attributes.subTitle }
 					onChange={ onChangeSubTitle }
 					focus={ focusedEditable === 'subTitle' }
-					onFocus={ onFocusTitle }
+					onFocus={ onFocusSubTitle }
 				/>
 				<RichText
 					tagName="ul"
+					className="pricing-table__features"
 					multiline="li"
 					placeholder={ __( 'Write a list of features…' ) }
 					value={ attributes.features }
 					onChange={ onChangeFeatures }
 					focus={ focusedEditable === 'features' }
 					onFocus={ onFocusFeatures }
-					className="features"
 				/>
 			</div>
 		);
@@ -90,13 +97,13 @@ registerBlockType( 'jet-press/pricing-table', {
 		} = props;
 		return (
 			<div className={ className }>
-				<h2>
+				<h2 className="pricing-table__title">
 					{ title }
 				</h2>
-				<h3>
+				<h3 className="pricing-table__subtitle">
 					{ subTitle }
 				</h3>
-				<ul className="features">
+				<ul className="pricing-table__features">
 					{ features }
 				</ul>
 			</div>
