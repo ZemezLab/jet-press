@@ -104,6 +104,21 @@ registerBlockType('jet-press/pricing-table', {
 			source: 'children',
 			selector: 'h3.pricing-table__subtitle'
 		},
+		prefix: {
+			type: 'array',
+			source: 'children',
+			selector: '.pricing-table__price-prefix'
+		},
+		price: {
+			type: 'array',
+			source: 'children',
+			selector: '.pricing-table__price-val'
+		},
+		suffix: {
+			type: 'array',
+			source: 'children',
+			selector: '.pricing-table__price-suffix'
+		},
 		features: {
 			type: 'array',
 			source: 'children',
@@ -129,22 +144,25 @@ registerBlockType('jet-press/pricing-table', {
 		var onChangeTitle = function onChangeTitle(value) {
 			props.setAttributes({ title: value });
 		};
-		var onFocusTitle = function onFocusTitle(focus) {
-			props.setFocus(_.extend({}, focus, { editable: 'title' }));
-		};
 
 		var onChangeSubTitle = function onChangeSubTitle(value) {
 			props.setAttributes({ subTitle: value });
 		};
-		var onFocusSubTitle = function onFocusSubTitle(focus) {
-			props.setFocus(_.extend({}, focus, { editable: 'subTitle' }));
+
+		var onChangePrefix = function onChangePrefix(value) {
+			props.setAttributes({ prefix: value });
+		};
+
+		var onChangePrice = function onChangePrice(value) {
+			props.setAttributes({ price: value });
+		};
+
+		var onChangeSuffix = function onChangeSuffix(value) {
+			props.setAttributes({ suffix: value });
 		};
 
 		var onChangeFeatures = function onChangeFeatures(value) {
 			props.setAttributes({ features: value });
-		};
-		var onFocusFeatures = function onFocusFeatures(focus) {
-			props.setFocus(_.extend({}, focus, { editable: 'features' }));
 		};
 
 		var onChangeBtnText = function onChangeBtnText(value) {
@@ -174,6 +192,34 @@ registerBlockType('jet-press/pricing-table', {
 				onChange: onChangeSubTitle,
 				focus: focusedEditable === 'subTitle'
 			}),
+			wp.element.createElement(
+				'div',
+				{ className: 'pricing-table__price' },
+				wp.element.createElement(RichText, {
+					tagName: 'span',
+					className: 'pricing-table__price-prefix',
+					placeholder: '$',
+					value: attributes.prefix,
+					onChange: onChangePrefix,
+					focus: focusedEditable === 'prefix'
+				}),
+				wp.element.createElement(RichText, {
+					tagName: 'span',
+					className: 'pricing-table__price-val',
+					placeholder: '99',
+					value: attributes.price,
+					onChange: onChangePrice,
+					focus: focusedEditable === 'price'
+				}),
+				wp.element.createElement(RichText, {
+					tagName: 'span',
+					className: 'pricing-table__price-suffix',
+					placeholder: '/month',
+					value: attributes.suffix,
+					onChange: onChangeSuffix,
+					focus: focusedEditable === 'suffix'
+				})
+			),
 			wp.element.createElement(RichText, {
 				tagName: 'ul',
 				className: 'pricing-table__features',
@@ -183,19 +229,23 @@ registerBlockType('jet-press/pricing-table', {
 				onChange: onChangeFeatures,
 				focus: focusedEditable === 'features'
 			}),
-			wp.element.createElement(RichText, {
-				className: 'pricing-table__btn',
-				tagName: 'a',
-				href: '{ attributes.btnUrl }',
-				placeholder: __('Button text…'),
-				value: attributes.btnText,
-				onChange: onChangeBtnText,
-				focus: focusedEditable === 'btnText'
-			}),
-			props.isSelected && wp.element.createElement(UrlInput, {
-				value: attributes.btnUrl,
-				onChange: onChangeBtnUrl
-			})
+			wp.element.createElement(
+				'div',
+				{ className: 'pricing-table__actions' },
+				wp.element.createElement(RichText, {
+					className: 'pricing-table__btn',
+					tagName: 'a',
+					href: '{ attributes.btnUrl }',
+					placeholder: __('Button text…'),
+					value: attributes.btnText,
+					onChange: onChangeBtnText,
+					focus: focusedEditable === 'btnText'
+				}),
+				props.isSelected && wp.element.createElement(UrlInput, {
+					value: attributes.btnUrl,
+					onChange: onChangeBtnUrl
+				})
+			)
 		);
 	},
 	save: function save(props) {
@@ -203,6 +253,9 @@ registerBlockType('jet-press/pricing-table', {
 		    _props$attributes = props.attributes,
 		    title = _props$attributes.title,
 		    subTitle = _props$attributes.subTitle,
+		    prefix = _props$attributes.prefix,
+		    price = _props$attributes.price,
+		    suffix = _props$attributes.suffix,
 		    features = _props$attributes.features,
 		    btnText = _props$attributes.btnText,
 		    btnUrl = _props$attributes.btnUrl;
@@ -221,14 +274,37 @@ registerBlockType('jet-press/pricing-table', {
 				subTitle
 			),
 			wp.element.createElement(
+				'div',
+				{ className: 'pricing-table__price' },
+				wp.element.createElement(
+					'span',
+					{ className: 'pricing-table__price-prefix' },
+					prefix
+				),
+				wp.element.createElement(
+					'span',
+					{ className: 'pricing-table__price-val' },
+					price
+				),
+				wp.element.createElement(
+					'span',
+					{ className: 'pricing-table__price-suffix' },
+					suffix
+				)
+			),
+			wp.element.createElement(
 				'ul',
 				{ className: 'pricing-table__features' },
 				features
 			),
 			wp.element.createElement(
-				'a',
-				{ className: 'pricing-table__btn', href: btnUrl },
-				btnText
+				'div',
+				{ className: 'pricing-table__actions' },
+				wp.element.createElement(
+					'a',
+					{ className: 'pricing-table__btn', href: btnUrl },
+					btnText
+				)
 			)
 		);
 	}
