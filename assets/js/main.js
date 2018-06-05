@@ -77,10 +77,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* 1 */
 /***/ (function(module, exports) {
 
+var __ = wp.i18n.__;
 var _wp$blocks = wp.blocks,
     registerBlockType = _wp$blocks.registerBlockType,
-    RichText = _wp$blocks.RichText;
-var __ = wp.i18n.__;
+    RichText = _wp$blocks.RichText,
+    MediaUpload = _wp$blocks.MediaUpload,
+    UrlInput = _wp$blocks.UrlInput;
+var _wp$components = wp.components,
+    Button = _wp$components.Button,
+    Dashicon = _wp$components.Dashicon,
+    IconButton = _wp$components.IconButton;
 
 
 registerBlockType('jet-press/pricing-table', {
@@ -91,17 +97,28 @@ registerBlockType('jet-press/pricing-table', {
 		title: {
 			type: 'array',
 			source: 'children',
-			selector: 'h2'
+			selector: 'h2.pricing-table__title'
 		},
 		subTitle: {
 			type: 'array',
 			source: 'children',
-			selector: 'h4'
+			selector: 'h3.pricing-table__subtitle'
 		},
 		features: {
 			type: 'array',
 			source: 'children',
-			selector: '.features'
+			selector: 'ul.pricing-table__features'
+		},
+		btnText: {
+			type: 'array',
+			source: 'children',
+			selector: '.pricing-table__btn'
+		},
+		btnUrl: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'href',
+			selector: '.pricing-table__btn'
 		}
 	},
 	edit: function edit(props) {
@@ -130,34 +147,54 @@ registerBlockType('jet-press/pricing-table', {
 			props.setFocus(_.extend({}, focus, { editable: 'features' }));
 		};
 
+		var onChangeBtnText = function onChangeBtnText(value) {
+			props.setAttributes({ btnText: value });
+		};
+
+		var onChangeBtnUrl = function onChangeBtnUrl(value) {
+			props.setAttributes({ btnUrl: value });
+		};
+
 		return wp.element.createElement(
 			'div',
 			{ className: props.className },
 			wp.element.createElement(RichText, {
+				className: 'pricing-table__title',
 				tagName: 'h2',
-				placeholder: __('Write title…'),
+				placeholder: __('Write subtitle…'),
 				value: attributes.title,
 				onChange: onChangeTitle,
-				focus: focusedEditable === 'title',
-				onFocus: onFocusTitle
+				focus: focusedEditable === 'title'
 			}),
 			wp.element.createElement(RichText, {
+				className: 'pricing-table__subtitle',
 				tagName: 'h3',
-				placeholder: __('Write subtitle…'),
+				placeholder: __('Write title…'),
 				value: attributes.subTitle,
 				onChange: onChangeSubTitle,
-				focus: focusedEditable === 'subTitle',
-				onFocus: onFocusTitle
+				focus: focusedEditable === 'subTitle'
 			}),
 			wp.element.createElement(RichText, {
 				tagName: 'ul',
+				className: 'pricing-table__features',
 				multiline: 'li',
 				placeholder: __('Write a list of features…'),
 				value: attributes.features,
 				onChange: onChangeFeatures,
-				focus: focusedEditable === 'features',
-				onFocus: onFocusFeatures,
-				className: 'features'
+				focus: focusedEditable === 'features'
+			}),
+			wp.element.createElement(RichText, {
+				className: 'pricing-table__btn',
+				tagName: 'a',
+				href: '{ attributes.btnUrl }',
+				placeholder: __('Button text…'),
+				value: attributes.btnText,
+				onChange: onChangeBtnText,
+				focus: focusedEditable === 'btnText'
+			}),
+			props.isSelected && wp.element.createElement(UrlInput, {
+				value: attributes.btnUrl,
+				onChange: onChangeBtnUrl
 			})
 		);
 	},
@@ -166,25 +203,32 @@ registerBlockType('jet-press/pricing-table', {
 		    _props$attributes = props.attributes,
 		    title = _props$attributes.title,
 		    subTitle = _props$attributes.subTitle,
-		    features = _props$attributes.features;
+		    features = _props$attributes.features,
+		    btnText = _props$attributes.btnText,
+		    btnUrl = _props$attributes.btnUrl;
 
 		return wp.element.createElement(
 			'div',
 			{ className: className },
 			wp.element.createElement(
 				'h2',
-				null,
+				{ className: 'pricing-table__title' },
 				title
 			),
 			wp.element.createElement(
 				'h3',
-				null,
+				{ className: 'pricing-table__subtitle' },
 				subTitle
 			),
 			wp.element.createElement(
 				'ul',
-				{ className: 'features' },
+				{ className: 'pricing-table__features' },
 				features
+			),
+			wp.element.createElement(
+				'a',
+				{ className: 'pricing-table__btn', href: btnUrl },
+				btnText
 			)
 		);
 	}

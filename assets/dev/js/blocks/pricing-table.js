@@ -31,16 +31,16 @@ registerBlockType( 'jet-press/pricing-table', {
 			source: 'children',
 			selector: 'ul.pricing-table__features',
 		},
-		buttonUrl: {
+		btnText: {
+			type: 'array',
+			source: 'children',
+			selector: '.pricing-table__btn',
+		},
+		btnUrl: {
 			type: 'string',
 			source: 'attribute',
-			selector: 'a.pricing-table__button',
 			attribute: 'href',
-		},
-		buttonText: {
-			type: 'array',
-			source: 'childern',
-			selector: 'a.pricing-table__button',
+			selector: '.pricing-table__btn',
 		}
 	},
 	edit: props => {
@@ -69,12 +69,12 @@ registerBlockType( 'jet-press/pricing-table', {
 			props.setFocus( _.extend( {}, focus, { editable: 'features' } ) );
 		};
 
-		const onChangeButton = value => {
-			props.setAttributes( { buttonText: value } );
+		const onChangeBtnText = value => {
+			props.setAttributes( { btnText: value } );
 		};
 
-		const onFocusButton = focus => {
-			console.log( focus );
+		const onChangeBtnUrl = value => {
+			props.setAttributes( { btnUrl: value } );
 		};
 
 		return (
@@ -105,18 +105,19 @@ registerBlockType( 'jet-press/pricing-table', {
 					focus={ focusedEditable === 'features' }
 				/>
 				<RichText
+					className="pricing-table__btn"
 					tagName="a"
-					className="pricing-table__button"
-					href={ attributes.buttonUrl }
-					value={ attributes.buttonText }
+					href="{ attributes.btnUrl }"
 					placeholder={ __( 'Button text…' ) }
-					onChange={ onChangeButton }
-					onFocus={ onFocusButton }
+					value={ attributes.btnText }
+					onChange={ onChangeBtnText }
+					focus={ focusedEditable === 'btnText' }
 				/>
 				{ props.isSelected && (
+
 					<UrlInput
-						value={ attributes.buttonUrl }
-						onChange={ ( value ) => props.setAttributes( { buttonUrl: value } ) }
+						value={ attributes.btnUrl }
+						onChange={ onChangeBtnUrl }
 					/>
 				) }
 			</div>
@@ -129,8 +130,8 @@ registerBlockType( 'jet-press/pricing-table', {
 				title,
 				subTitle,
 				features,
-				buttonUrl,
-				buttonText
+				btnText,
+				btnUrl
 			}
 		} = props;
 		return (
@@ -144,11 +145,9 @@ registerBlockType( 'jet-press/pricing-table', {
 				<ul className="pricing-table__features">
 					{ features }
 				</ul>
-				<div className="pricing-table__actions">
-					<a href={ buttonUrl } className="pricing-table__button">
-						{ buttonText }
-					</a>
-				</div>
+				<a className="pricing-table__btn" href={ btnUrl }>
+					{ btnText }
+				</a>
 			</div>
 		);
 	}
