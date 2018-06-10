@@ -29,15 +29,33 @@ define( 'JET_PRESS_VERSION', '1.0.0' );
  */
 function jet_press_init() {
 	add_action( 'enqueue_block_editor_assets', 'jet_press_blocks' );
+	add_action( 'wp_enqueue_scripts', 'jet_press_stylesheet' );
+}
+
+/**
+ * Enqueue main stylesheet
+ * @return [type] [description]
+ */
+function jet_press_stylesheet() {
+	wp_enqueue_style(
+		'jet-press',
+		JET_PRESS_URL . 'assets/css/jet-press.css',
+		array(),
+		JET_PRESS_VERSION
+	);
 }
 
 function jet_press_blocks() {
+
 	wp_enqueue_script(
 		'jet-press-blocks',
 		JET_PRESS_URL . 'assets/js/main.js',
 		array( 'wp-blocks', 'wp-i18n', 'wp-element' ),
 		JET_PRESS_VERSION
 	);
+
+	jet_press_stylesheet();
+
 }
 
 add_action( 'init', 'jet_press_init' );

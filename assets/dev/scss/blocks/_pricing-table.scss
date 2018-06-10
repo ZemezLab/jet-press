@@ -1,0 +1,47 @@
+.wp-block-jet-press-pricing-table {
+	.pricing-table {
+		text-align: center;
+		border: 1px solid $bordersColor;
+		border-radius: 10px;
+		overflow: hidden;
+		&__price {
+			display: flex;
+			justify-content: center;
+			padding: 1em 0;
+			background: $boxBgColor;
+		}
+		&__heading {
+			padding: 1em 0;
+		}
+		&__title {
+			padding: 0;
+			margin: 0;
+		}
+		&__subtitle {
+			padding: 0;
+			margin: 0;
+		}
+		&__features {
+			max-width: 70%;
+			margin: 0 auto;
+			padding: 1em 0;
+			list-style: none;
+			text-align: left;
+			li {
+				list-style: disc;
+				margin: 0;
+				padding: 0;
+			}
+		}
+		&__btn {
+			display: inline-block;
+			background: $primaryColor;
+			color: #fff;
+			padding: 10px 20px;
+			border-radius: 10px;
+		}
+		&__actions {
+			padding: 1em 0;
+		}
+	}
+}
