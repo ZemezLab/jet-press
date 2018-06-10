@@ -78,15 +78,20 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /***/ (function(module, exports) {
 
 var __ = wp.i18n.__;
-var _wp$blocks = wp.blocks,
-    registerBlockType = _wp$blocks.registerBlockType,
-    RichText = _wp$blocks.RichText,
-    MediaUpload = _wp$blocks.MediaUpload,
-    UrlInput = _wp$blocks.UrlInput;
+var registerBlockType = wp.blocks.registerBlockType;
+var _wp$editor = wp.editor,
+    InspectorControls = _wp$editor.InspectorControls,
+    ColorPalette = _wp$editor.ColorPalette,
+    RichText = _wp$editor.RichText,
+    Editable = _wp$editor.Editable,
+    MediaUpload = _wp$editor.MediaUpload,
+    UrlInput = _wp$editor.UrlInput;
 var _wp$components = wp.components,
     Button = _wp$components.Button,
     Dashicon = _wp$components.Dashicon,
-    IconButton = _wp$components.IconButton;
+    IconButton = _wp$components.IconButton,
+    PanelColor = _wp$components.PanelColor,
+    SelectControl = _wp$components.SelectControl;
 
 
 registerBlockType('jet-press/pricing-table', {
@@ -97,27 +102,32 @@ registerBlockType('jet-press/pricing-table', {
 		title: {
 			type: 'array',
 			source: 'children',
-			selector: 'h2.pricing-table__title'
+			selector: 'h2.pricing-table__title',
+			default: __('Main Title')
 		},
 		subTitle: {
 			type: 'array',
 			source: 'children',
-			selector: 'h3.pricing-table__subtitle'
+			selector: 'h3.pricing-table__subtitle',
+			default: __('Subitle')
 		},
 		prefix: {
 			type: 'array',
 			source: 'children',
-			selector: '.pricing-table__price-prefix'
+			selector: '.pricing-table__price-prefix',
+			default: __('$')
 		},
 		price: {
 			type: 'array',
 			source: 'children',
-			selector: '.pricing-table__price-val'
+			selector: '.pricing-table__price-val',
+			default: __('99')
 		},
 		suffix: {
 			type: 'array',
 			source: 'children',
-			selector: '.pricing-table__price-suffix'
+			selector: '.pricing-table__price-suffix',
+			default: __('/per month')
 		},
 		features: {
 			type: 'array',
@@ -127,19 +137,39 @@ registerBlockType('jet-press/pricing-table', {
 		btnText: {
 			type: 'array',
 			source: 'children',
-			selector: '.pricing-table__btn'
+			selector: '.pricing-table__btn',
+			default: __('Add to cart')
 		},
 		btnUrl: {
 			type: 'string',
 			source: 'attribute',
 			attribute: 'href',
 			selector: '.pricing-table__btn'
+		},
+		priceStyle: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'data-style',
+			selector: 'div[data-style]'
+		},
+		titleColor: {
+			type: 'string'
 		}
 	},
 	edit: function edit(props) {
 
 		var focusedEditable = props.focus ? props.focus.editable || 'title' : null;
 		var attributes = props.attributes;
+		var styles = [{
+			value: 'layout-1',
+			label: 'Layout 1'
+		}, {
+			value: 'layout-2',
+			label: 'Layout 2'
+		}, {
+			value: 'layout-2',
+			label: 'Layout 2'
+		}];
 
 		var onChangeTitle = function onChangeTitle(value) {
 			props.setAttributes({ title: value });
@@ -173,21 +203,53 @@ registerBlockType('jet-press/pricing-table', {
 			props.setAttributes({ btnUrl: value });
 		};
 
-		return wp.element.createElement(
+		var onChangeStyle = function onChangeStyle(value) {
+			props.setAttributes({ priceStyle: value });
+		};
+
+		return [props.isSelected && wp.element.createElement(
+			InspectorControls,
+			{
+				key: 'inspector'
+			},
+			wp.element.createElement(SelectControl, {
+				label: __('Style'),
+				value: attributes.priceStyle,
+				options: styles,
+				onChange: onChangeStyle
+			}),
+			wp.element.createElement(
+				PanelColor,
+				{
+					title: __('Title Color'),
+					colorValue: attributes.titleColor,
+					initialOpen: false
+				},
+				wp.element.createElement(ColorPalette, {
+					value: attributes.titleColor,
+					onChange: function onChange(value) {
+						return props.setAttributes({ titleColor: value });
+					}
+				})
+			)
+		), wp.element.createElement(
 			'div',
-			{ className: props.className },
+			{ className: props.className, 'data-style': attributes.priceStyle },
 			wp.element.createElement(RichText, {
 				className: 'pricing-table__title',
 				tagName: 'h2',
-				placeholder: __('Write subtitle…'),
+				placeholder: __('Write title…'),
 				value: attributes.title,
 				onChange: onChangeTitle,
-				focus: focusedEditable === 'title'
+				focus: focusedEditable === 'title',
+				style: {
+					color: attributes.titleColor
+				}
 			}),
 			wp.element.createElement(RichText, {
 				className: 'pricing-table__subtitle',
 				tagName: 'h3',
-				placeholder: __('Write title…'),
+				placeholder: __('Write subtitle…'),
 				value: attributes.subTitle,
 				onChange: onChangeSubTitle,
 				focus: focusedEditable === 'subTitle'
@@ -246,26 +308,30 @@ registerBlockType('jet-press/pricing-table', {
 					onChange: onChangeBtnUrl
 				})
 			)
-		);
+		)];
 	},
 	save: function save(props) {
 		var className = props.className,
 		    _props$attributes = props.attributes,
 		    title = _props$attributes.title,
+		    titleColor = _props$attributes.titleColor,
 		    subTitle = _props$attributes.subTitle,
 		    prefix = _props$attributes.prefix,
 		    price = _props$attributes.price,
 		    suffix = _props$attributes.suffix,
 		    features = _props$attributes.features,
 		    btnText = _props$attributes.btnText,
-		    btnUrl = _props$attributes.btnUrl;
+		    btnUrl = _props$attributes.btnUrl,
+		    priceStyle = _props$attributes.priceStyle;
 
 		return wp.element.createElement(
 			'div',
-			{ className: className },
+			{ className: className, 'data-style': priceStyle },
 			wp.element.createElement(
 				'h2',
-				{ className: 'pricing-table__title' },
+				{ className: 'pricing-table__title', style: {
+						color: titleColor
+					} },
 				title
 			),
 			wp.element.createElement(

@@ -1,14 +1,21 @@
 const { __ } = wp.i18n;
 const {
-	registerBlockType,
+	registerBlockType
+} = wp.blocks;
+const {
+	InspectorControls,
+	ColorPalette,
 	RichText,
+	Editable,
 	MediaUpload,
 	UrlInput
-} = wp.blocks;
+} = wp.editor;
 const {
 	Button,
 	Dashicon,
-	IconButton
+	IconButton,
+	PanelColor,
+	SelectControl,
 } = wp.components;
 
 registerBlockType( 'jet-press/pricing-table', {
@@ -20,26 +27,31 @@ registerBlockType( 'jet-press/pricing-table', {
 			type: 'array',
 			source: 'children',
 			selector: 'h2.pricing-table__title',
+			default: __( 'Main Title' )
 		},
 		subTitle: {
 			type: 'array',
 			source: 'children',
 			selector: 'h3.pricing-table__subtitle',
+			default: __( 'Subitle' )
 		},
 		prefix: {
 			type: 'array',
 			source: 'children',
 			selector: '.pricing-table__price-prefix',
+			default: __( '$' )
 		},
 		price: {
 			type: 'array',
 			source: 'children',
 			selector: '.pricing-table__price-val',
+			default: __( '99' )
 		},
 		suffix: {
 			type: 'array',
 			source: 'children',
 			selector: '.pricing-table__price-suffix',
+			default: __( '/per month' )
 		},
 		features: {
 			type: 'array',
@@ -50,18 +62,42 @@ registerBlockType( 'jet-press/pricing-table', {
 			type: 'array',
 			source: 'children',
 			selector: '.pricing-table__btn',
+			default: __( 'Add to cart' )
 		},
 		btnUrl: {
 			type: 'string',
 			source: 'attribute',
 			attribute: 'href',
 			selector: '.pricing-table__btn',
-		}
+		},
+		priceStyle: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'data-style',
+			selector: 'div[data-style]',
+		},
+		titleColor: {
+			type: 'string',
+		},
 	},
 	edit: props => {
 
 		const focusedEditable = props.focus ? props.focus.editable || 'title' : null;
 		const attributes = props.attributes;
+		const styles = [
+			{
+				value: 'layout-1',
+				label: 'Layout 1',
+			},
+			{
+				value: 'layout-2',
+				label: 'Layout 2',
+			},
+			{
+				value: 'layout-2',
+				label: 'Layout 2',
+			},
+		]
 
 		const onChangeTitle = value => {
 			props.setAttributes( { title: value } );
@@ -95,20 +131,50 @@ registerBlockType( 'jet-press/pricing-table', {
 			props.setAttributes( { btnUrl: value } );
 		};
 
-		return (
-			<div className={ props.className }>
+		const onChangeStyle = value => {
+			props.setAttributes( { priceStyle: value } );
+		};
+
+		return [
+			props.isSelected && (
+					<InspectorControls
+						key={ 'inspector' }
+					>
+						<SelectControl
+							label={ __( 'Style' ) }
+							value={ attributes.priceStyle }
+							options={ styles }
+							onChange={ onChangeStyle }
+						/>
+						<PanelColor
+							title={ __( 'Title Color' ) }
+							colorValue={ attributes.titleColor }
+							initialOpen={ false }
+						>
+							<ColorPalette
+								value={ attributes.titleColor }
+								onChange={ ( value ) => props.setAttributes( { titleColor: value } ) }
+							/>
+						</PanelColor>
+
+					</InspectorControls>
+			),
+			<div className={ props.className } data-style={ attributes.priceStyle }>
 				<RichText
 					className="pricing-table__title"
 					tagName="h2"
-					placeholder={ __( 'Write subtitle…' ) }
+					placeholder={ __( 'Write title…' ) }
 					value={ attributes.title }
 					onChange={ onChangeTitle }
 					focus={ focusedEditable === 'title' }
+					style={ {
+						color: attributes.titleColor
+					} }
 				/>
 				<RichText
 					className="pricing-table__subtitle"
 					tagName="h3"
-					placeholder={ __( 'Write title…' ) }
+					placeholder={ __( 'Write subtitle…' ) }
 					value={ attributes.subTitle }
 					onChange={ onChangeSubTitle }
 					focus={ focusedEditable === 'subTitle' }
@@ -159,7 +225,6 @@ registerBlockType( 'jet-press/pricing-table', {
 						focus={ focusedEditable === 'btnText' }
 					/>
 					{ props.isSelected && (
-
 						<UrlInput
 							value={ attributes.btnUrl }
 							onChange={ onChangeBtnUrl }
@@ -167,25 +232,29 @@ registerBlockType( 'jet-press/pricing-table', {
 					) }
 				</div>
 			</div>
-		);
+		];
 	},
 	save: props => {
 		const {
 			className,
 			attributes: {
 				title,
+				titleColor,
 				subTitle,
 				prefix,
 				price,
 				suffix,
 				features,
 				btnText,
-				btnUrl
+				btnUrl,
+				priceStyle
 			}
 		} = props;
 		return (
-			<div className={ className }>
-				<h2 className="pricing-table__title">
+			<div className={ className } data-style={ priceStyle }>
+				<h2 className="pricing-table__title" style={ {
+						color: titleColor
+					} } >
 					{ title }
 				</h2>
 				<h3 className="pricing-table__subtitle">
