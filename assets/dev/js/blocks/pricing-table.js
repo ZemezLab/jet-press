@@ -90,6 +90,21 @@ registerBlockType( 'jet-press/pricing-table', {
 		},
 		headingBg: {
 			type: 'string',
+		},
+		pricePrefixColor: {
+			type: 'string',
+		},
+		priceColor: {
+			type: 'string',
+		},
+		priceSuffixColor: {
+			type: 'string',
+		},
+		priceGap: {
+			type: 'string',
+		},
+		priceBg: {
+			type: 'string',
 		}
 	},
 	edit: props => {
@@ -185,6 +200,36 @@ registerBlockType( 'jet-press/pricing-table', {
 							/>
 						</PanelBody>
 
+						<PanelBody title={ __( 'Price' ) } initialOpen={ false }>
+							<RangeControl
+								label={ __( 'Price Vertical Gap' ) }
+								value={ attributes.priceGap }
+								min='1'
+								max='100'
+								onChange={ ( value ) => props.setAttributes( { priceGap: value } ) }
+							/>
+							<p>{ __( 'Price Prefix Color' ) }</p>
+							<ColorPalette
+								value={ attributes.pricePrefixColor }
+								onChange={ ( value ) => props.setAttributes( { pricePrefixColor: value } ) }
+							/>
+							<p>{ __( 'Price Color' ) }</p>
+							<ColorPalette
+								value={ attributes.priceColor }
+								onChange={ ( value ) => props.setAttributes( { priceColor: value } ) }
+							/>
+							<p>{ __( 'Price Suffix Color' ) }</p>
+							<ColorPalette
+								value={ attributes.priceSuffixColor }
+								onChange={ ( value ) => props.setAttributes( { priceSuffixColor: value } ) }
+							/>
+							<p>{ __( 'Price Background' ) }</p>
+							<ColorPalette
+								value={ attributes.priceBg }
+								onChange={ ( value ) => props.setAttributes( { priceBg: value } ) }
+							/>
+						</PanelBody>
+
 					</InspectorControls>
 			),
 			<div className={ props.className } data-style={ attributes.priceStyle }>
@@ -217,7 +262,11 @@ registerBlockType( 'jet-press/pricing-table', {
 							} }
 						/>
 					</div>
-					<div className="pricing-table__price">
+					<div className="pricing-table__price" style={ {
+						paddingTop: attributes.priceGap + 'px',
+						paddingBottom: attributes.priceGap + 'px',
+						backgroundColor: attributes.priceBg
+					} }>
 						<RichText
 							tagName="span"
 							className="pricing-table__price-prefix"
@@ -225,6 +274,9 @@ registerBlockType( 'jet-press/pricing-table', {
 							value={ attributes.prefix }
 							onChange={ onChangePrefix }
 							focus={ focusedEditable === 'prefix' }
+							style={ {
+								color: attributes.pricePrefixColor
+							} }
 						/>
 						<RichText
 							tagName="span"
@@ -233,6 +285,9 @@ registerBlockType( 'jet-press/pricing-table', {
 							value={ attributes.price }
 							onChange={ onChangePrice }
 							focus={ focusedEditable === 'price' }
+							style={ {
+								color: attributes.priceColor
+							} }
 						/>
 						<RichText
 							tagName="span"
@@ -241,6 +296,9 @@ registerBlockType( 'jet-press/pricing-table', {
 							value={ attributes.suffix }
 							onChange={ onChangeSuffix }
 							focus={ focusedEditable === 'suffix' }
+							style={ {
+								color: attributes.priceSuffixColor
+							} }
 						/>
 					</div>
 					<RichText
@@ -284,8 +342,13 @@ registerBlockType( 'jet-press/pricing-table', {
 				headingBg,
 				headingGap,
 				prefix,
+				pricePrefixColor,
 				price,
+				priceColor,
 				suffix,
+				priceSuffixColor,
+				priceBg,
+				priceGap,
 				features,
 				btnText,
 				btnUrl,
@@ -311,14 +374,24 @@ registerBlockType( 'jet-press/pricing-table', {
 							{ subTitle }
 						</h3>
 					</div>
-					<div className="pricing-table__price">
-						<span className="pricing-table__price-prefix">
+					<div className="pricing-table__price" style={ {
+						paddingTop: priceGap + 'px',
+						paddingBottom: priceGap + 'px',
+						backgroundColor: priceBg
+					} }>
+						<span className="pricing-table__price-prefix" style={ {
+								color: pricePrefixColor
+							} } >
 							{ prefix }
 						</span>
-						<span className="pricing-table__price-val">
+						<span className="pricing-table__price-val" style={ {
+								color: priceColor
+							} } >
 							{ price }
 						</span>
-						<span className="pricing-table__price-suffix">
+						<span className="pricing-table__price-suffix" style={ {
+								color: priceSuffixColor
+							} } >
 							{ suffix }
 						</span>
 					</div>

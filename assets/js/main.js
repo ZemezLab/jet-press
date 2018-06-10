@@ -166,6 +166,21 @@ registerBlockType('jet-press/pricing-table', {
 		},
 		headingBg: {
 			type: 'string'
+		},
+		pricePrefixColor: {
+			type: 'string'
+		},
+		priceColor: {
+			type: 'string'
+		},
+		priceSuffixColor: {
+			type: 'string'
+		},
+		priceGap: {
+			type: 'string'
+		},
+		priceBg: {
+			type: 'string'
 		}
 	},
 	edit: function edit(props) {
@@ -279,6 +294,63 @@ registerBlockType('jet-press/pricing-table', {
 						return props.setAttributes({ headingBg: value });
 					}
 				})
+			),
+			wp.element.createElement(
+				PanelBody,
+				{ title: __('Price'), initialOpen: false },
+				wp.element.createElement(RangeControl, {
+					label: __('Price Vertical Gap'),
+					value: attributes.priceGap,
+					min: '1',
+					max: '100',
+					onChange: function onChange(value) {
+						return props.setAttributes({ priceGap: value });
+					}
+				}),
+				wp.element.createElement(
+					'p',
+					null,
+					__('Price Prefix Color')
+				),
+				wp.element.createElement(ColorPalette, {
+					value: attributes.pricePrefixColor,
+					onChange: function onChange(value) {
+						return props.setAttributes({ pricePrefixColor: value });
+					}
+				}),
+				wp.element.createElement(
+					'p',
+					null,
+					__('Price Color')
+				),
+				wp.element.createElement(ColorPalette, {
+					value: attributes.priceColor,
+					onChange: function onChange(value) {
+						return props.setAttributes({ priceColor: value });
+					}
+				}),
+				wp.element.createElement(
+					'p',
+					null,
+					__('Price Suffix Color')
+				),
+				wp.element.createElement(ColorPalette, {
+					value: attributes.priceSuffixColor,
+					onChange: function onChange(value) {
+						return props.setAttributes({ priceSuffixColor: value });
+					}
+				}),
+				wp.element.createElement(
+					'p',
+					null,
+					__('Price Background')
+				),
+				wp.element.createElement(ColorPalette, {
+					value: attributes.priceBg,
+					onChange: function onChange(value) {
+						return props.setAttributes({ priceBg: value });
+					}
+				})
 			)
 		), wp.element.createElement(
 			'div',
@@ -318,14 +390,21 @@ registerBlockType('jet-press/pricing-table', {
 				),
 				wp.element.createElement(
 					'div',
-					{ className: 'pricing-table__price' },
+					{ className: 'pricing-table__price', style: {
+							paddingTop: attributes.priceGap + 'px',
+							paddingBottom: attributes.priceGap + 'px',
+							backgroundColor: attributes.priceBg
+						} },
 					wp.element.createElement(RichText, {
 						tagName: 'span',
 						className: 'pricing-table__price-prefix',
 						placeholder: '$',
 						value: attributes.prefix,
 						onChange: onChangePrefix,
-						focus: focusedEditable === 'prefix'
+						focus: focusedEditable === 'prefix',
+						style: {
+							color: attributes.pricePrefixColor
+						}
 					}),
 					wp.element.createElement(RichText, {
 						tagName: 'span',
@@ -333,7 +412,10 @@ registerBlockType('jet-press/pricing-table', {
 						placeholder: '99',
 						value: attributes.price,
 						onChange: onChangePrice,
-						focus: focusedEditable === 'price'
+						focus: focusedEditable === 'price',
+						style: {
+							color: attributes.priceColor
+						}
 					}),
 					wp.element.createElement(RichText, {
 						tagName: 'span',
@@ -341,7 +423,10 @@ registerBlockType('jet-press/pricing-table', {
 						placeholder: '/month',
 						value: attributes.suffix,
 						onChange: onChangeSuffix,
-						focus: focusedEditable === 'suffix'
+						focus: focusedEditable === 'suffix',
+						style: {
+							color: attributes.priceSuffixColor
+						}
 					})
 				),
 				wp.element.createElement(RichText, {
@@ -383,8 +468,13 @@ registerBlockType('jet-press/pricing-table', {
 		    headingBg = _props$attributes.headingBg,
 		    headingGap = _props$attributes.headingGap,
 		    prefix = _props$attributes.prefix,
+		    pricePrefixColor = _props$attributes.pricePrefixColor,
 		    price = _props$attributes.price,
+		    priceColor = _props$attributes.priceColor,
 		    suffix = _props$attributes.suffix,
+		    priceSuffixColor = _props$attributes.priceSuffixColor,
+		    priceBg = _props$attributes.priceBg,
+		    priceGap = _props$attributes.priceGap,
 		    features = _props$attributes.features,
 		    btnText = _props$attributes.btnText,
 		    btnUrl = _props$attributes.btnUrl,
@@ -420,20 +510,30 @@ registerBlockType('jet-press/pricing-table', {
 				),
 				wp.element.createElement(
 					'div',
-					{ className: 'pricing-table__price' },
+					{ className: 'pricing-table__price', style: {
+							paddingTop: priceGap + 'px',
+							paddingBottom: priceGap + 'px',
+							backgroundColor: priceBg
+						} },
 					wp.element.createElement(
 						'span',
-						{ className: 'pricing-table__price-prefix' },
+						{ className: 'pricing-table__price-prefix', style: {
+								color: pricePrefixColor
+							} },
 						prefix
 					),
 					wp.element.createElement(
 						'span',
-						{ className: 'pricing-table__price-val' },
+						{ className: 'pricing-table__price-val', style: {
+								color: priceColor
+							} },
 						price
 					),
 					wp.element.createElement(
 						'span',
-						{ className: 'pricing-table__price-suffix' },
+						{ className: 'pricing-table__price-suffix', style: {
+								color: priceSuffixColor
+							} },
 						suffix
 					)
 				),
